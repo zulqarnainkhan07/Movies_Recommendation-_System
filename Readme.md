@@ -65,7 +65,7 @@ The recommendation system will use the scraped movie data to suggest movies to u
 ## Requirements
 
 - Python 3.x
-- CSV
+- pandas
 - imdbpy
 
 ## Credits 

@@ -3,7 +3,7 @@
 # that the IMDb library is not installed. To install the library, use the following
 # command in your terminal (Command Prompt or Windows PowerShell):
 #
-#     pip install pandas imdbpy
+#     pip install imdbpy
 #
 # After installation, it is recommended to restart your system to ensure proper
 # configuration of the library.
@@ -20,16 +20,17 @@
 # - Syed Zubair Sarwar (BSE-23S-086)
 # ===============================================================================
 
-import csv
 import time
 from imdb import IMDb
+import pandas as pd  # Importing pandas library
 
-# Create an instance of the IMDb class
+# Initialize IMDb instance
 ia = IMDb()
 
 # Function to fetch movie details
 def fetch_movie_details(movie_id):
     try:
+        # Retrieve movie details from IMDb
         movie = ia.get_movie(movie_id)
         return {
             'movie_id': movie_id,
@@ -37,6 +38,7 @@ def fetch_movie_details(movie_id):
             'genres': ', '.join(movie.get('genres', [])),
         }
     except Exception as e:
+        # Handle errors during movie retrieval
         print(f"Error fetching movie {movie_id}: {e}")
         return None
 
@@ -45,6 +47,7 @@ movies_data = []
 
 # Fetch details for 60,000 movies
 for movie_id in range(1, 62425):
+    # Fetch details for each movie and add to list
     movie_details = fetch_movie_details(movie_id)
     if movie_details:
         movies_data.append(movie_details)
@@ -56,13 +59,11 @@ for movie_id in range(1, 62425):
     # Respectful delay to avoid rate limiting
     time.sleep(0.5)
 
+# Convert the list of dictionaries to a DataFrame
+df = pd.DataFrame(movies_data)
+
 # Write data to CSV file
-with open('movies.csv', 'w', newline='', encoding='utf-8') as csvfile:
-    fieldnames = ['movie_id', 'title', 'genres']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+df.to_csv('movies.csv', index=False)
 
-    writer.writeheader()
-    for movie in movies_data:
-        writer.writerow(movie)
-
+# Print completion message
 print("Data scraping complete. Saved to movies.csv")
